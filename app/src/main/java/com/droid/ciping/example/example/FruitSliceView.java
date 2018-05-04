@@ -61,6 +61,9 @@ public class FruitSliceView extends View {
         }
     };
 
+    // 基于屏幕的显示区域
+    private Rect outRect = new Rect();
+
     public FruitSliceView(Context context) {
         super(context);
         init();
@@ -99,9 +102,20 @@ public class FruitSliceView extends View {
         }
     }
 
-    public void onTouch(MotionEvent event) {
-        Rect outRect = new Rect();
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         getGlobalVisibleRect(outRect);
+        super.onLayout(changed, left, top, right, bottom);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        removeCallbacks(diff);
+        removeCallbacks(clearP);
+        super.onDetachedFromWindow();
+    }
+
+    public void onTouch(MotionEvent event) {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -124,13 +138,6 @@ public class FruitSliceView extends View {
                 postDelayed(clearP, 400);
                 break;
         }
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        removeCallbacks(diff);
-        removeCallbacks(clearP);
-        super.onDetachedFromWindow();
     }
 
     private void onMove(float x, float y) {
